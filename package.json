@@ -1,6 +1,8 @@
 {
-  "name": "vue-demo",
-  "version": "0.1.0",
+  "name": "vue-middleware",
+  "version": "1.0.0",
+  "description": "vue form config",
+  "author": "sky",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
