@@ -2,6 +2,7 @@ class Svue {
     constructor(options){
         this._data = options.data;
         this.watchData(options.data);
+        // this.listenData(options.data);
         this.compile(options.el);
     }
 
@@ -37,7 +38,18 @@ class Svue {
                 case 3: { // 文本
                     let nodeContent = child.textContent;
                     let reg = /\{\{\s*(\S*)\s*\}\}/;
-                    if (reg.test(nodeContent)) {
+                    let regM = /\{\{\s*(\S*\.\S*)\s*\}\}/;
+                    if (regM.test(nodeContent)) {
+                        let dataTemp = this.jsonPlat(this._data);
+                        for(let key in dataTemp){
+                            if (key === RegExp.$1){
+                                node.innerText = dataTemp[key]; // RegExp.$1 非标准用法，正则匹配到的第一个对象
+                                new Subscribe(this, RegExp.$1.split('.')[1], (newVal) => {
+                                    child.textContent = newVal;
+                                });
+                            }
+                        }
+                    } else if (reg.test(nodeContent)) {
                         child.textContent = this._data[RegExp.$1]; // RegExp.$1 非标准用法，正则匹配到的第一个对象
                         new Subscribe(this, RegExp.$1, (newVal) => {
                             child.textContent = newVal;
@@ -51,14 +63,27 @@ class Svue {
         })
     }
 
-    watchData(data) {
-        Object.keys(data).forEach(key => {
+    jsonPlat(json) {
+        let jsonTemp = {};
+        for(let key1 in json) {
+            for (let key2 in json[key1]) {
+                const k = `${key1}.${key2}`;
+                jsonTemp[k] = json[key1][key2];
+            }
+        }
+        return jsonTemp;
+    }
+
+    listenData(data) {
+        let json = this.jsonPlat(data);
+        Object.keys(json).forEach(key => {
             let val = data[key];
             let p = new Publish();
             Object.defineProperty(data, key , {
                 enumerable: true,
                 configurable: true,
                 get() {
+                    console.log('get', key);
                     if (Publish.target) {
                         p.addSub(Publish.target);
                     }
@@ -66,11 +91,45 @@ class Svue {
                 },
                 set(newVal) {
                     if (newVal !== val) {
+                        console.log('set', newVal);
                         val = newVal;
                         p.notice(newVal);
                     }
                 }
             })
+        })
+    }
+
+    watchData(data) {
+        Object.keys(data).forEach(key => {
+            let val = data[key];
+            if (typeof val === 'object') {
+                this.watchData(val);
+            } else {
+                this.observer(data, key, val);
+            }
+        })
+    }
+
+    observer(data, key, val) {
+        let p = new Publish();
+        Object.defineProperty(data, key , {
+            enumerable: true,
+            configurable: true,
+            get() {
+                console.log('get', key);
+                if (Publish.target) {
+                    p.addSub(Publish.target);
+                }
+                return val;
+            },
+            set(newVal) {
+                if (newVal !== val) {
+                    console.log('set', newVal);
+                    val = newVal;
+                    p.notice(newVal);
+                }
+            }
         })
     }
 }

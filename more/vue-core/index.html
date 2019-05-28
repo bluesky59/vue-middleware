@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Vue</title>
-<!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
     <script src="svue.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="app">
     {{message}}
-    <p>{{message}}</p>
-    <input v-model="name"/>
-    {{name}}
+    <!--    <p>{{message}}</p>-->
+    <!--    <input v-model="inputVal"/>-->
+    <!--    {{inputVal}}-->
+    <ul>
+        <li>{{ obj.name }}</li>
+        <li>{{ obj.age }}</li>
+        <li>{{ obj.gender }}</li>
+    </ul>
 </div>
 </body>
 
@@ -20,11 +25,13 @@
         el: '#app',
         data: {
             message: 'hello vue',
-            name: 'vue'
+            inputVal: 'vue',
+            obj: {
+                name: 'bluesky',
+                age: 20,
+                gender: '女'
+            }
         }
     });
-    vm._data.message = "测试数据";
-    vm._data.name = "李四";
-    console.log(vm);
 </script>
 </html>
