@@ -2,8 +2,8 @@ class Svue {
     constructor(options){
         this._data = options.data;
         this.watchData(options.data);
-        // this.listenData(options.data);
         this.compile(options.el);
+        this.proxy(this, '_data');
     }
 
     compile(el) {
@@ -20,14 +20,18 @@ class Svue {
                     Array.from(attrs).forEach(attr => {
                         let attrName = attr.name;
                         let attrVal = attr.value;
+                        let dataTemp = this.jsonPlat(this._data);
                         if (attrName.indexOf('v-') === 0) {
                             attrName = attrName.substr(2);
                             if (attrName === 'model') {
-                                child.value = this._data[attrVal];
+                                child.value = dataTemp[attrVal];
                             }
                             child.addEventListener('input', e => {
                                 this._data[attrVal] = e.target.value;
+                                console.log(e.target.value);
+                                console.log(this._data[attrVal]);
                             });
+                            console.log(attrVal.split('.')[1]);
                             new Subscribe(this, attrVal, (newVal) => {
                                 child.value = newVal;
                             });
@@ -65,39 +69,23 @@ class Svue {
 
     jsonPlat(json) {
         let jsonTemp = {};
-        for(let key1 in json) {
-            for (let key2 in json[key1]) {
-                const k = `${key1}.${key2}`;
-                jsonTemp[k] = json[key1][key2];
+        for (let key1 in json) {
+            if (typeof json[key1] === 'object') {
+                if (json[key1] instanceof Array) {
+                    jsonTemp[key1] = json[key1];
+                } else if (json[key1] === null) {
+                    jsonTemp[key1] = json[key1];
+                } else {
+                    for (let key2 in json[key1]) {
+                        const k = `${key1}.${key2}`;
+                        jsonTemp[k] = json[key1][key2];
+                    }
+                }
+            } else {
+                jsonTemp[key1] = json[key1];
             }
         }
         return jsonTemp;
-    }
-
-    listenData(data) {
-        let json = this.jsonPlat(data);
-        Object.keys(json).forEach(key => {
-            let val = data[key];
-            let p = new Publish();
-            Object.defineProperty(data, key , {
-                enumerable: true,
-                configurable: true,
-                get() {
-                    console.log('get', key);
-                    if (Publish.target) {
-                        p.addSub(Publish.target);
-                    }
-                    return val;
-                },
-                set(newVal) {
-                    if (newVal !== val) {
-                        console.log('set', newVal);
-                        val = newVal;
-                        p.notice(newVal);
-                    }
-                }
-            })
-        })
     }
 
     watchData(data) {
@@ -113,24 +101,41 @@ class Svue {
 
     observer(data, key, val) {
         let p = new Publish();
+        console.log(data);
+        console.log(key);
         Object.defineProperty(data, key , {
             enumerable: true,
             configurable: true,
-            get() {
-                console.log('get', key);
+            get() { // 此处要做依赖收集，未用到的data不需要加入依赖队列
+                // console.log('get', key);
                 if (Publish.target) {
                     p.addSub(Publish.target);
                 }
+                console.log(val);
                 return val;
             },
             set(newVal) {
                 if (newVal !== val) {
-                    console.log('set', newVal);
+                    console.log('set', key, newVal);
                     val = newVal;
                     p.notice(newVal);
                 }
             }
         })
+    }
+
+    proxy(target, sourceKey) {
+        for (let key in this._data) {
+            Object.defineProperty(target, key, {
+                configurable: true,
+                get() {
+                    return target[sourceKey][key];
+                },
+                set(newVal) {
+                    target[sourceKey][key] = newVal;
+                }
+            })
+        }
     }
 }
 
@@ -144,8 +149,16 @@ class Publish {
         this.SubList.push(data);
     }
 
+    removeSub(data) {
+        const index = this.SubList.indexOf(data);
+        this.SubList.splice(index, 1);
+    }
+
     notice(val) {
+        console.log('-------');
+        console.log(this.SubList);
         this.SubList.forEach(item => {
+            console.log('==========');
             item.operation(val);
         })
     }
@@ -160,6 +173,7 @@ class Subscribe {
     }
 
     operation(val) {
+        console.log('.........');
         this.cb(val);
     }
 }
