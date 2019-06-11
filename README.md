@@ -34,3 +34,16 @@
     1 async/await
     2 Object.values()
     3 Object.entries()
+    4 String padding
+    5 Object.getOwnPropertyDescriptors()
+    6 ShareArrayBuffer Atomics 用于从共享内存位置读取和写入
+    
+## ES9
+    异步迭代
+    Promise.finally()
+    Rest/Spread 属性
+    正则表达式命名捕获组
+    正则表达式反向断言
+    正则表达式dotAll模式
+    正则表达式Unicode转义
+    非转义序列的模板字符串
