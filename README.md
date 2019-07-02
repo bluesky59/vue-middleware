@@ -47,3 +47,13 @@
     正则表达式dotAll模式
     正则表达式Unicode转义
     非转义序列的模板字符串
+    
+## ES0
+    JSON.stringify
+    Array的flat() flatMap()
+    String的trimStart()  trimEnd()
+    Object.fromEntries()
+    Symbol.prototype.description
+    String.prototype.matchAll
+    Function.prototype.toString
+    

@@ -14,9 +14,9 @@ for(let [key, val] of Object.entries(obj)) {
 }
 
 // string padding 字符串填充，将原始字符串按照约定填充
-// console.log('0.0'.padStart(4, '10'));
+console.log('9'.padStart(2, '0'));
 // console.log('0.0'.padStart(20));
-// console.log('0.0'.padEnd(4, '0'));
+console.log('0.0'.padEnd(4, '0'));
 // console.log('0.0'.padEnd(10, '1'));
 
 const obj2 = {
@@ -25,6 +25,6 @@ const obj2 = {
         return 18;
     }
 }
-console.log(Object.getOwnPropertyDescriptors(obj));  // 返回对象的所有自身属性的描述符
-console.log(Object.getOwnPropertyDescriptors(obj2));
+// console.log(Object.getOwnPropertyDescriptors(obj));  // 返回对象的所有自身属性的描述符
+// console.log(Object.getOwnPropertyDescriptors(obj2));
 
