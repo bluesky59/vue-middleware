@@ -1,0 +1,28 @@
+var productExceptSelf = function(nums) {
+    let numArrLeft = [], numArrRight = [], numsArr = [];
+    numArrLeft[0] = 1;
+    numArrRight[nums.length - 1] = 1;
+    for (var i = 1; i< nums.length; i++ ) {
+        numArrLeft[i] = nums[i-1] * numArrLeft[i-1];
+    }
+    for (let i = nums.length - 2; i >= 0; i--) {
+        numArrRight[i] = nums[i+1] * numArrRight[i+1];
+    }
+    for (var i = 0; i < numArrLeft.length; i++) {
+        numsArr.push(numArrLeft[i] * numArrRight[i]);
+    }
+    return numsArr;
+};
+
+// var productExceptSelf = function(nums) {
+//     let res = nums.splice(0,2).reverse();
+//     let last = res[0] * res[1];
+//     for (let i of nums) {
+//         res = res.map(x => x * i);
+//         res.push(last);
+//         last * i;
+//     }
+//     return res;
+// };
+
+console.log(productExceptSelf([1,2,3,4]));
