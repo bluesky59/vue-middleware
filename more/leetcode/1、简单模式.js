@@ -81,4 +81,45 @@ var romanToInt = function(s) {
 // console.log(romanToInt('LVIII'));
 // console.log(romanToInt('MCMXCIV'));
 
+var reverse = function(x) {
+    // 自己的解法
+    // let str = x.toString(), res = 0;
+    // if (str[0] === '+' || str[0] === '-') {
+    //     res = str.substr(0, 1) + [...str.substr(1)].reverse().join('');
+    // } else {
+    //     res = [...str].reverse().join('');
+    // }
+    // res = res < (-2)**31 || res > (2**31)-1 ? 0 : res;
+    // return parseInt(res);
+
+    // 别人的解法
+    let re=x>=0 ? Number.parseInt(x.toString().split('').reverse().join('')) : Number.parseInt('-'+x.toString().split('').reverse().join('').slice(0))
+    re=re<(-2)**31 || re>(2**31)-1 ? 0 : re
+    return re;
+};
+
+// 要点： 先计算出结果再考虑溢出！！！
+// console.log(reverse(123));
+// console.log(reverse(-123));
+// console.log(reverse(120));
+// console.log(reverse(Math.pow(2, 32)));
+// console.log(reverse(1534236469));
+
+const plusOne = function(digits) {
+    for (let i = digits.length -1; i >= 0; i--){
+        if (digits[i] !== 9) {
+            digits[i] += 1;
+            return digits;
+        } else {
+            digits[i] = 0;
+        }
+    }
+    return [1].concat(digits);
+};
+// 原本自作聪明把数组转成整数+1再转换成数组处理，其实没有考虑溢出的问题，不如直接在数组上运算，从最后一位开始+1，全都为9的话考虑新建数组
+
+console.log(plusOne([1,2,3]));
+console.log(plusOne([6,1,4,5,3,9,0,1,9,5,1,8,6,7,0,5,5,4,3]));
+console.log(plusOne([9,9]));
+
 
