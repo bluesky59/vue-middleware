@@ -118,8 +118,53 @@ const plusOne = function(digits) {
 };
 // 原本自作聪明把数组转成整数+1再转换成数组处理，其实没有考虑溢出的问题，不如直接在数组上运算，从最后一位开始+1，全都为9的话考虑新建数组
 
-console.log(plusOne([1,2,3]));
-console.log(plusOne([6,1,4,5,3,9,0,1,9,5,1,8,6,7,0,5,5,4,3]));
-console.log(plusOne([9,9]));
+// console.log(plusOne([1,2,3]));
+// console.log(plusOne([6,1,4,5,3,9,0,1,9,5,1,8,6,7,0,5,5,4,3]));
+// console.log(plusOne([9,9]));
+
+var isPalindrome = function(x) {
+    // 解法一
+    // let str = x.toString();
+    // let str1 = '';
+    // for (let i = str.length -1; i >= 0; i--) {
+    //     str1 += str[i];
+    // }
+    // return str === str1;
+    // 解法二
+    return x.toString() === [...x.toString()].reverse().join('');
+};
+
+// console.log(isPalindrome(121));
+// console.log(isPalindrome(-121));
+// console.log(isPalindrome(10));
+
+var longestCommonPrefix = function(strs) {
+    strs = strs.sort();
+    let strFirst = strs[0], pubStr = '';
+    switch (strs.length) {
+        case 0: {
+            return '';
+        }
+        case 1: {
+            return strFirst;
+        }
+        default: {
+            for (let i = 0; i < strFirst.length; i++) {
+                for (let j =  1; j < strs.length; j++) {
+                    if(strFirst[i] !== strs[j][i]){
+                        return pubStr;
+                    }
+                }
+                pubStr += strFirst[i];
+            }
+            return pubStr;
+        }
+    }
+};
+
+console.log(longestCommonPrefix(["flower","flow","flight"]));
+console.log(longestCommonPrefix(["dog","racecar","car"]));
+
+
 
 
